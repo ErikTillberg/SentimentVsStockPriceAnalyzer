@@ -9,10 +9,7 @@ from pymongo import MongoClient
 import json
 
 #Variables that contains the user credentials to access Twitter API 
-access_token = "307572680-a6YbnrmtRf93c3QSBKWwJIy7t4xpvtUXBAsy60Ds"
-access_token_secret = "ChU5dC8rHj3WGrTnTOpBvBuRksYJimIU1xYkHR3UbezhU"
-consumer_key = "WbUsbhL6bVlnukhWaHevAgDRO"
-consumer_secret = "NF97BBUFmqyr6xJUF0aIk4Rnyl0SHNkPkyaDPZSOHIpjCnXZ7Z"
+
 
 client = MongoClient()
 db = client.TwitterData

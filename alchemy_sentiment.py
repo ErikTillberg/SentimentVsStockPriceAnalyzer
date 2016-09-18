@@ -7,7 +7,7 @@ def get_sentiment_score_from_text(text, apikey):
     params = {
         'text': text,
         'outputMode': 'json',
-        'apikey': apikey,
+        'apikey':
     }
     r = requests.get(base_url+'/text/TextGetTextSentiment', params=params)
     '''
@@ -36,7 +36,7 @@ def get_sentiment_score_for_targets_from_text(text, targets, apikey):
         'text': text,
         'targets': targets,
         'outputMode': 'json',
-        'apikey': apikey,
+        'apikey': '3b5857fc266a2b7b5fca6a661e72570c6dc3f8a2',
     }
     r = requests.get(base_url+'/text/TextGetTargetedSentiment', params=params)
     '''

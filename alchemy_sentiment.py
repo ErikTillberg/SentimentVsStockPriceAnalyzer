@@ -3,6 +3,13 @@ import requests
 #
 base_url = 'https://gateway-a.watsonplatform.net/calls'
 #
+def _check_request_for_error(r):
+    json_format = r.json()
+    if json_format['status'] == 'ERROR':
+        return json_format['statusInfo']
+    #
+    return None
+#
 def get_taxonomy_from_text(text, apikey):
     params = {
         'text': text,
@@ -10,6 +17,10 @@ def get_taxonomy_from_text(text, apikey):
         'apikey': apikey,
     }
     r = requests.get(base_url+'/text/TextGetRankedTaxonomy', params=params)
+    error = _check_request_for_error(r)
+    if error is not None:
+        raise Exception('An error was returned from the API request: '+str(error))
+    #
     '''
     Example response:
 
@@ -58,6 +69,10 @@ def get_keywords_from_text(text, apikey, get_sentiment=False, get_knowledge_grap
         'apikey': apikey,
     }
     r = requests.get(base_url+'/text/TextGetRankedKeywords', params=params)
+    error = _check_request_for_error(r)
+    if error is not None:
+        raise Exception('An error was returned from the API request: '+str(error))
+    #
     '''
     Example response:
 
@@ -124,6 +139,10 @@ def get_sentiment_score_from_text(text, apikey):
         'apikey': apikey,
     }
     r = requests.get(base_url+'/text/TextGetTextSentiment', params=params)
+    error = _check_request_for_error(r)
+    if error is not None:
+        raise Exception('An error was returned from the API request: '+str(error))
+    #
     '''
     Example response:
 
@@ -153,6 +172,10 @@ def get_sentiment_score_for_targets_from_text(text, targets, apikey):
         'apikey': apikey,
     }
     r = requests.get(base_url+'/text/TextGetTargetedSentiment', params=params)
+    error = _check_request_for_error(r)
+    if error is not None:
+        raise Exception('An error was returned from the API request: '+str(error))
+    #
     '''
     Example response:
 

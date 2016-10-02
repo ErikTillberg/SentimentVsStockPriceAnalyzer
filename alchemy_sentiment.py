@@ -98,7 +98,7 @@ def get_keywords_from_text(text, apikey, get_sentiment=False, get_knowledge_grap
         for x in keywords:
             x['relevance'] = float(x['relevance'])
             #
-            if get_sentiment:
+            if 'sentiment' in x:
                 if 'score' not in x['sentiment'] and x['sentiment']['type'] == 'neutral':
                     x['sentiment']['score'] = 0
                 #
@@ -107,7 +107,7 @@ def get_keywords_from_text(text, apikey, get_sentiment=False, get_knowledge_grap
                 x['sentiment'] = {}
                 x['sentiment']['score'] = None
             #
-            if not get_knowledge_graph:
+            if 'knowledgeGraph' not in x:
                 x['knowledgeGraph'] = {}
                 x['knowledgeGraph']['typeHierarchy'] = None
             #
@@ -202,6 +202,9 @@ if __name__ == '__main__':
     #
     print(get_keywords_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey, True, True))
     print(get_keywords_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
+    #
+    print(get_keywords_from_text('I like to eat apples.', apikey, False, True))
+    print(get_keywords_from_text('I like Apple products.', apikey, False, True))
     #
     print(get_sentiment_score_from_text('Apple is good. Blackberry is bad.', apikey))
     print(get_sentiment_score_for_targets_from_text('Apple is good. Blackberry is bad.', 'Apple|Blackberry', apikey))

@@ -6,16 +6,19 @@ from tweepy import Stream
 #Import mongoDB
 from pymongo import MongoClient
 
+from alchemy_sentiment import get_sentiment_score_from_text
+
 import json
 
 import threading
-
+import pickle
 from time import sleep
 import signal
 import sys
 
 #Variables that contains the user credentials to access Twitter API
-access_token = 
+
+access_token =
 access_token_secret =
 consumer_key =
 consumer_secret =
@@ -33,9 +36,14 @@ class StdOutListener(StreamListener):
 
     def on_data(self, data):
         tweet = json.loads(data)
-        print data
+        #try:
+            #tweet['sentiment'] = get_sentiment_score_from_text(tweet['text'] , '')
+            #print tweet['sentiment']
+        #except:
+            #print 'Could not gather sentiment from text'
         collection = db[self.searchTerm]
         collection.insert_one(tweet)
+        print tweet['text'].encode('utf-8')
         return True
 
     def on_error(self, status):
@@ -45,16 +53,17 @@ class TweetFetcher:
 
     fetchers = []
 
-    def __init__(self, searchTerm):
+    def __init__(self, searchTerm, extraTerms):
         TweetFetcher.fetchers.append(self)
         self.searchTerm = searchTerm
+        self.extraTerms = extraTerms
 
     def startTwitterSearch(self):
         l = StdOutListener(self.searchTerm)
         auth = OAuthHandler(consumer_key, consumer_secret)
         auth.set_access_token(access_token, access_token_secret)
         self.stream = Stream(auth, l)
-        self.stream.filter(track = [self.searchTerm], async = True)
+        self.stream.filter(track = ([self.searchTerm]+self.extraTerms), async = True)
 
         #self.t = threading.Thread(target=stream.filter, kwargs={'track':[self.searchTerm], 'async':True})
         #self.t.start()
@@ -71,10 +80,10 @@ if __name__ == '__main__':
 
     signal.signal(signal.SIGINT, ctrlCHandler)
 
-    t = TweetFetcher('microsoft')
+    t = TweetFetcher('microsoft', ['windows 10'])
     t.startTwitterSearch()
-    t1 = TweetFetcher('apple')
-    t1.startTwitterSearch()
+    #t1 = TweetFetcher('microsoft')
+    #t1.startTwitterSearch()
 
     while True:
         sleep(0.1)

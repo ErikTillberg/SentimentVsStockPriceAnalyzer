@@ -137,6 +137,9 @@ def get_sentiment_score_from_text(text, apikey):
         'text': text,
         'outputMode': 'json',
         'apikey': apikey,
+
+        'apikey': "3b5857fc266a2b7b5fca6a661e72570c6dc3f8a2"
+
     }
     r = requests.get(base_url+'/text/TextGetTextSentiment', params=params)
     error = _check_request_for_error(r)
@@ -216,21 +219,22 @@ def get_sentiment_score_for_targets_from_text(text, targets, apikey):
     #
 #
 if __name__ == '__main__':
-    apikey = '<insert key here>'
+    apikey = "3b5857fc266a2b7b5fca6a661e72570c6dc3f8a2"
     #
-    print(get_sentiment_score_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
-    print(get_sentiment_score_for_targets_from_text('These Images Have Us VERY Excited About The iPhone 7', 'iphone', apikey))
+    #print(get_sentiment_score_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
+    #print(get_sentiment_score_for_targets_from_text('These Images Have Us VERY Excited About The iPhone 7', 'iphone', apikey))
     #
-    print(get_taxonomy_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
+    #print(get_taxonomy_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
     #
-    print(get_keywords_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey, True, True))
-    print(get_keywords_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
+    #print(get_keywords_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey, True, True))
+    #print(get_keywords_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
     #
-    print(get_keywords_from_text('I like to eat apples.', apikey, False, True))
-    print(get_keywords_from_text('I like Apple products.', apikey, False, True))
+    print("Keywords for text \'I did not have to eat that candy apple like that lol\'")
+    print(get_keywords_from_text('I did not have to eat that candy apple like that lol', apikey, False, True))
+    #print(get_keywords_from_text('I like Apple products.', apikey, False, True))
     #
-    print(get_sentiment_score_from_text('Apple is good. Blackberry is bad.', apikey))
-    print(get_sentiment_score_for_targets_from_text('Apple is good. Blackberry is bad.', 'Apple|Blackberry', apikey))
+    #print(get_sentiment_score_from_text('Apple is good. Blackberry is bad.', apikey))
+    #print(get_sentiment_score_for_targets_from_text('Apple is good. Blackberry is bad.', 'Apple|Blackberry', apikey))
     #
     '''
     url = "http://www.zacks.com/stock/news/207968/stock-market-news-for-february-19-2016"

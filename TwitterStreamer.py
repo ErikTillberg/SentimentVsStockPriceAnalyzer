@@ -17,13 +17,6 @@ from time import sleep
 import signal
 import sys
 
-#Variables that contains the user credentials to access Twitter API
-
-access_token =
-access_token_secret =
-consumer_key =
-consumer_secret =
-
 client = MongoClient()
 db = client.TwitterData
 
@@ -113,6 +106,17 @@ if __name__ == '__main__':
     root_logger.addHandler(file_log_handler)
     #
     logger = logging.getLogger(__name__)
+    #
+    ##############
+    #
+    import yaml
+    with open('api_keys.yaml', 'r') as f:
+        api_keys = yaml.load(f)
+    #
+    access_token = api_keys['twitter']['access_token']
+    access_token_secret = api_keys['twitter']['access_token_secret']
+    consumer_key = api_keys['twitter']['consumer_key']
+    consumer_secret = api_keys['twitter']['consumer_secret']
     #
     ##############
     

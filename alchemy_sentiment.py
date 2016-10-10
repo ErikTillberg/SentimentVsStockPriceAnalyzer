@@ -244,7 +244,13 @@ if __name__ == '__main__':
     #
     ##############
     #
-    apikey = '<insert key here>'
+    import yaml
+    with open('api_keys.yaml', 'r') as f:
+        api_keys = yaml.load(f)
+    #
+    apikey = api_keys['alchemy']['apikey']
+    #
+    ##############
     #
     #print(get_sentiment_score_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
     #print(get_sentiment_score_for_targets_from_text('These Images Have Us VERY Excited About The iPhone 7', 'iphone', apikey))

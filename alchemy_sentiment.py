@@ -1,7 +1,9 @@
 from __future__ import print_function
 import requests
+import logging
 #
 base_url = 'https://gateway-a.watsonplatform.net/calls'
+logger = logging.getLogger(__name__)
 #
 def _check_request_for_error(r):
     json_format = r.json()
@@ -19,6 +21,7 @@ def get_taxonomy_from_text(text, apikey):
     r = requests.get(base_url+'/text/TextGetRankedTaxonomy', params=params)
     error = _check_request_for_error(r)
     if error is not None:
+        logger.error('There was an error with the request. Error:\n%s', r.text)
         raise Exception('An error was returned from the API request: '+str(error))
     #
     '''
@@ -53,6 +56,7 @@ def get_taxonomy_from_text(text, apikey):
         taxonomy = r.json()['taxonomy']
         return {x['label']:{'taxonomy':x['score'], 'confident':x['confident']} for x in taxonomy}
     except:
+        logger.exception('Could not parse the keywords from the result:\n%s', r.text)
         raise Exception('Could not parse the keywords from the result:\n'+str(r.text))
     #
 #
@@ -71,6 +75,7 @@ def get_keywords_from_text(text, apikey, get_sentiment=False, get_knowledge_grap
     r = requests.get(base_url+'/text/TextGetRankedKeywords', params=params)
     error = _check_request_for_error(r)
     if error is not None:
+        logger.error('There was an error with the request. Error:\n%s', r.text)
         raise Exception('An error was returned from the API request: '+str(error))
     #
     '''
@@ -129,6 +134,7 @@ def get_keywords_from_text(text, apikey, get_sentiment=False, get_knowledge_grap
         #
         return {x['text']:{'relevance':x['relevance'], 'sentiment':x['sentiment']['score'], 'knowledge_graph':x['knowledgeGraph']['typeHierarchy']} for x in keywords}
     except:
+        logger.exception('Could not parse the keywords from the result:\n%s', r.text)
         raise Exception('Could not parse the keywords from the result:\n'+str(r.text))
     #
 #
@@ -144,6 +150,7 @@ def get_sentiment_score_from_text(text, apikey):
     r = requests.get(base_url+'/text/TextGetTextSentiment', params=params)
     error = _check_request_for_error(r)
     if error is not None:
+        logger.error('There was an error with the request. Error:\n%s', r.text)
         raise Exception('An error was returned from the API request: '+str(error))
     #
     '''
@@ -164,6 +171,7 @@ def get_sentiment_score_from_text(text, apikey):
     try:
         return float(r.json()['docSentiment']['score'])
     except:
+        logger.exception('Could not parse the keywords from the result:\n%s', r.text)
         raise Exception('Could not parse the sentiment score from the result:\n'+str(r.text))
     #
 #
@@ -177,6 +185,7 @@ def get_sentiment_score_for_targets_from_text(text, targets, apikey):
     r = requests.get(base_url+'/text/TextGetTargetedSentiment', params=params)
     error = _check_request_for_error(r)
     if error is not None:
+        logger.error('There was an error with the request. Error:\n%s', r.text)
         raise Exception('An error was returned from the API request: '+str(error))
     #
     '''
@@ -215,11 +224,27 @@ def get_sentiment_score_for_targets_from_text(text, targets, apikey):
         #
         return {x['text']:{'sentiment':x['sentiment']['score']} for x in results}
     except:
+        logger.exception('Could not parse the keywords from the result:\n%s', r.text)
         raise Exception('Could not parse the sentiment score from the result:\n'+str(r.text))
     #
 #
 if __name__ == '__main__':
-    apikey = "3b5857fc266a2b7b5fca6a661e72570c6dc3f8a2"
+    root_logger = logging.getLogger()
+    root_logger.setLevel(logging.DEBUG)
+    #
+    import color_stream_handler
+    stream_handler = color_stream_handler.ColorStreamHandler()
+    stream_handler.setFormatter(logging.Formatter('%(levelname)-6s : %(name)-25s : %(message)s'))
+    #file_log_handler = logging.FileHandler('alchemy.log')
+    #
+    root_logger.addHandler(stream_handler)
+    #root_logger.addHandler(file_log_handler)
+    #
+    logger = logging.getLogger(__name__)
+    #
+    ##############
+    #
+    apikey = '<insert key here>'
     #
     #print(get_sentiment_score_from_text('These Images Have Us VERY Excited About The iPhone 7.', apikey))
     #print(get_sentiment_score_for_targets_from_text('These Images Have Us VERY Excited About The iPhone 7', 'iphone', apikey))

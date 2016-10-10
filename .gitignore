@@ -1,2 +1,4 @@
 *.pyd
+*.pyc
 *.p
+*.log

@@ -33,16 +33,18 @@ class StdOutListener(StreamListener):
         try:
             tweet = json.loads(data)
             #Search the list of words:
-            matchedWord = self.matchToString(tweet['text'])
-            if (matchedWord != None):
-                collection = db[matchedWord]
-                collection.insert_one(tweet)
+            matchedWords = self.matchToString(tweet['text'])
+            if (len(matchedWords) != 0):
+                for x in matchedWords:
+                    collection = db[x]
+                    collection.insert_one(tweet)
+                #
             #if a match wasn't found, the text must have appeared in an imbedded link.
             else:
                 collection = db['unmatched']
                 collection.insert_one(tweet)
 
-            print matchedWord
+            print matchedWords
             print tweet['text'].encode('utf-8')
 
             #
@@ -68,14 +70,16 @@ class StdOutListener(StreamListener):
     #first item in the list it matched to.
     def matchToString(self, tweetText):
         #for each group of search terms
+        matches = []
         for l in self.searchTerms:
             #for each word in that group
             for word in l:
                 matchObj = re.match(r'(.*)' + word + '(.*?).*', tweetText, re.M|re.I)
                 if (matchObj): #if it matched, return first element in the list.
-                    return l[0]
-        #If it get's here, return None (no match).
-        return None
+                    matches.append(l[0])
+                    #return l[0]
+        # make sure there are no duplicates
+        return list(set(matches))
 
     def on_error(self, status):
         self._logger.error('StreamListener error: %s', status)
@@ -177,7 +181,7 @@ if __name__ == '__main__':
     ##############
     #
     import yaml
-    with open('../api_keys.yaml', 'r') as f:
+    with open('api_keys.yaml', 'r') as f:
         api_keys = yaml.load(f)
     #
     access_token = api_keys['twitter']['access_token']

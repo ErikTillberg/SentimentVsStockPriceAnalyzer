@@ -5,3 +5,5 @@ twitter:
   consumer_secret: '<key>'
 alchemy:
   apikey: '<key>'
+marketplace:
+  apikey: '<key>'

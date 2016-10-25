@@ -56,9 +56,11 @@ def write_stock_table_to_csv(table, filename):
 	#
 #
 if __name__=='__main__':
-	response = get_stock_data(3600, 30, 'AAPL')
+	stock_name = 'APPL'
+	#
+	response = get_stock_data(3600, 30, stock_name)
 	print response['header']
 	table = parse_stock_data(response['data'])
 	print get_stock_table_string(table)
-	write_stock_table_to_csv(table, 'temp.csv')
+	write_stock_table_to_csv(table, stock_name+'.csv')
 #

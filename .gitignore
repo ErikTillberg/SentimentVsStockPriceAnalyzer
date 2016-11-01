@@ -5,3 +5,7 @@
 api_keys.yaml
 *.csv
 *.rda
+*.pdf
+*.png
+*.json
+.Rhistory

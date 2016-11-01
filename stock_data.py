@@ -13,7 +13,7 @@ def get_stock_data(interval_seconds, num_days, stock):
 	#
 	return {'header':text[0:num_of_header_lines], 'data':lines}
 #
-def parse_stock_data(data):
+def parse_stock_data(data, interval_seconds):
 	table = []
 	last_time_stamp = None
 	#
@@ -24,7 +24,7 @@ def parse_stock_data(data):
 				line[0] = int(line[0][1:])
 				last_time_stamp = line[0]
 			else:
-				line[0] = int(last_time_stamp)+interval*int(line[0])
+				line[0] = int(last_time_stamp)+interval_seconds*int(line[0])
 			#
 			line.append(datetime.datetime.fromtimestamp(line[0]).strftime('%Y-%m-%d %H:%M:%S'))
 			#
@@ -56,11 +56,12 @@ def write_stock_table_to_csv(table, filename):
 	#
 #
 if __name__=='__main__':
-	stock_name = 'APPL'
+	stock_name = 'TSLA'
+	interval_seconds = 3600
 	#
-	response = get_stock_data(3600, 30, stock_name)
+	response = get_stock_data(interval_seconds, 10, stock_name)
 	print response['header']
-	table = parse_stock_data(response['data'])
+	table = parse_stock_data(response['data'], interval_seconds)
 	print get_stock_table_string(table)
 	write_stock_table_to_csv(table, stock_name+'.csv')
 #

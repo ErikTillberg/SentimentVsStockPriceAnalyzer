@@ -9,3 +9,4 @@ api_keys.yaml
 *.png
 *.json
 .Rhistory
+.Rdata

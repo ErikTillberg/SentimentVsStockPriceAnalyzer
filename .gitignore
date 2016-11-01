@@ -4,3 +4,4 @@
 *.log
 api_keys.yaml
 *.csv
+*.rda

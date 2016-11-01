@@ -24,6 +24,6 @@ count = 0
 for i in range(0, collSize):
     if i%10000==0:
         print 'progress: ' + str(i)
-    if i % everyXTweet == 0
+    if i % everyXTweet == 0:
         collToSave.insert_one(collection.find()[i])
         

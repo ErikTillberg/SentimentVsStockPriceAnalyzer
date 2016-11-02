@@ -24,6 +24,11 @@ everyXTweet = math.floor(collSize/num) #14 for wells fargo
 print 'everyXTweet: %d'%(everyXTweet)
 
 collToSave = db[db_name+'_filtered']
+collSize2 = db.command("collstats", db_name+'_filtered')['count']
+if collSize2 != 0:
+	print "Collection %s is not empty. Aborting!"%(db_name+'_filtered')
+	exit()
+#
 
 start_time = time.time()
 cursor = collection.find()

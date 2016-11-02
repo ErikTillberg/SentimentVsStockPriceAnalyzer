@@ -2,11 +2,14 @@ from pymongo import MongoClient
 import math
 import re
 import json
+import time
 
 client = MongoClient()
 db = client.TwitterData
 
-collection = db['tesla']
+db_name = 'tesla'
+
+collection = db[db_name]
 #get count of collection
 #print(db.command("collstats", "microsoft")['count'])
 
@@ -14,16 +17,20 @@ collection = db['tesla']
 #print(collection.find()[0])
         
 num = 50000
-collSize = db.command("collstats", "tesla")['count']
+collSize = db.command("collstats", db_name)['count']
 
 everyXTweet = math.floor(collSize/num) #14 for wells fargo
 
-collToSave = db['tesla filtered']
-count = 0
+collToSave = db[db_name+' filtered']
 
-for i in range(0, collSize):
-    if i%10000==0:
-        print 'progress: ' + str(i)
-    if i % everyXTweet == 0:
-        collToSave.insert_one(collection.find()[i])
+start_time = time.time()
+cursor = collection.find()
+counter = 0
+
+for record in cursor:
+    if counter%10000==0:
+        print 'progress: %d/%d tweets, %f seconds'%(counter, collSize, time.time()-start_time)
+    counter += 1
+    if counter % everyXTweet == 0:
+        collToSave.insert_one(record)
         

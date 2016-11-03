@@ -1,10 +1,9 @@
-setwd("C:/Users/Steven/Documents/Programming/Git Repositories/Remote Repositories/SentimentVsStockPriceAnalyzer")
+#setwd("C:/Users/Steven/Documents/Programming/Git Repositories/Remote Repositories/SentimentVsStockPriceAnalyzer")
 library(jsonlite)
 
-data_name <- "tsla"
+data_name <- "tesla_filtered.json"
 
-json_file <- paste(data_name, "fixed.json", sep=".")
-json_data <- fromJSON(txt=json_file)
+json_data <- fromJSON(txt=data_name)
 
 names(json_data)
 head(json_data, n=3)

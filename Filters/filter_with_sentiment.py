@@ -3,12 +3,14 @@ import math
 import re
 import json
 import time
+import sys
+sys.path.insert(0, '../Sentiment_Analysis')
 from nltk_vader_sentiment_analysis import get_sentiment_from_text
 
 client = MongoClient()
 db = client.TwitterData
 
-db_name = 'microsoft'
+db_name = 'tesla'
 
 collection = db[db_name]
 #get count of collection

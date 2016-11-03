@@ -6,8 +6,8 @@ import time
 import numpy as np
 from stock_data import parse_stock_data, get_stock_data, get_stock_table_string
 
-stock_name = 'MSFT'
-collection_name = 'microsoft'
+stock_name = 'TSLA'
+collection_name = 'tesla'
 interval_seconds = 3600
 #
 ###############

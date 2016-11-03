@@ -9,7 +9,7 @@ from bson import json_util
 client = MongoClient()
 db = client.TwitterData
 
-collection_name = 'apple_filtered'
+collection_name = 'microsoft_filtered'
 filename = collection_name+'.json'
 collection = db[collection_name]
 coll_size = db.command("collstats", collection_name)['count']

@@ -41,26 +41,26 @@ for record in cursor:
 		print 'progress: %d/%d tweets, %f seconds'%(counter, collSize, time.time()-start_time)
 	counter += 1
 	if use_next_tweet:
-        try:
-            sentiment = get_sentiment_from_text(record['text'])
-    		if sentiment['neu'] != 1.0:
-    			record['sentiment'] = sentiment
-    			collToSave.insert_one(record)
-    			use_next_tweet = False
-        except:
-            print('error')
+		try:
+			sentiment = get_sentiment_from_text(record['text'])
+			if sentiment['neu'] != 1.0:
+				record['sentiment'] = sentiment
+				collToSave.insert_one(record)
+				use_next_tweet = False
+		except:
+			print('error')
 		#
 	else:
 		if counter % everyXTweet == 0:
-            try:
-                sentiment = get_sentiment_from_text(record['text'])
-    			if sentiment['neu'] != 1.0:
-    				record['sentiment'] = sentiment
-    				collToSave.insert_one(record)
-    			else:
-    				use_next_tweet = True
-            except:
-                print('error')
+			try:
+				sentiment = get_sentiment_from_text(record['text'])
+				if sentiment['neu'] != 1.0:
+					record['sentiment'] = sentiment
+					collToSave.insert_one(record)
+				else:
+					use_next_tweet = True
+			except:
+				print('error')
 			#
         #
 	#

@@ -1,0 +1,9 @@
+twitter:
+  access_token: '<key>'
+  access_token_secret: '<key>'
+  consumer_key: '<key>'
+  consumer_secret: '<key>'
+alchemy:
+  apikey: '<key>'
+marketplace:
+  apikey: '<key>'

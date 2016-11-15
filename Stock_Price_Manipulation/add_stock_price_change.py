@@ -7,13 +7,14 @@ import numpy as np
 from stock_data import parse_stock_data, get_stock_data, get_stock_table_string
 
 stock_name = 'TSLA'
-collection_name = 'tesla'
+collection_name = 'tesla filtered_filtered_no_garbage'
 interval_seconds = 3600
 #
 ###############
 #
 response = get_stock_data(interval_seconds, 30, stock_name)
 print response['header']
+print response['data']
 table = parse_stock_data(response['data'], interval_seconds)
 print get_stock_table_string(table)
 print

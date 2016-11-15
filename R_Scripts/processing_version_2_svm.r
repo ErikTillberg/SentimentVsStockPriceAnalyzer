@@ -7,7 +7,7 @@ library("e1071")
 
 set.seed(1)
 
-load("tesla_filtered.json.rda")
+load("tesla filtered_filtered_no_garbage_filtered.json.rda")
 #stock_dat = read.csv("AAPL.csv", header=TRUE)
 
 plot((stock_dat$DATE-stock_dat$DATE[1])/(3600*24), stock_dat$CLOSE)
@@ -36,10 +36,11 @@ summary(tune.out)
 predictions = predict(tune.out$best.model, news=test_data)
 table(predictions, test_data$stock_change)
 
-svmfit = svm(training_data$stock_change~., data = training_data, kernel = "radial", gamma = 0.5, cost = 10000, scale = FALSE)
+svmfit = svm(training_data$stock_change~., data = training_data, kernel = "radial", gamma = 0.25, cost = 10000, scale = FALSE)
 summary(svmfit)
 
 predictions = predict(svmfit, test_data)
-predictions
 
-table(predictions, test_data$stock_change)
+t <- table(predictions, test_data$stock_change)
+success <- ((t[1]+t[4])/(t[1]+t[2]+t[3]+t[4]))
+success

@@ -10,7 +10,7 @@ from nltk_vader_sentiment_analysis import get_sentiment_from_text
 client = MongoClient()
 db = client.TwitterData
 
-db_name = 'tesla'
+db_name = 'tesla filtered_filtered_no_garbage'
 
 collection = db[db_name]
 #get count of collection
@@ -19,10 +19,10 @@ collection = db[db_name]
 #get element in collection
 #print(collection.find()[0])
 
-num = 50000
+num = 12000
 collSize = db.command("collstats", db_name)['count']
 
-everyXTweet = math.floor(collSize/num) #14 for wells fargo
+everyXTweet = 1 #math.floor(collSize/num) #14 for wells fargo
 print 'everyXTweet: %d'%(everyXTweet)
 
 collToSave = db[db_name+'_filtered']

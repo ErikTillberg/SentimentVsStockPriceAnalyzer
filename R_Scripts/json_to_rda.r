@@ -1,7 +1,7 @@
-#setwd("C:/Users/Steven/Documents/Programming/Git Repositories/Remote Repositories/SentimentVsStockPriceAnalyzer")
+setwd("C:/Users/Steven/Documents/Programming/Git Repositories/Remote Repositories/SentimentVsStockPriceAnalyzer/R_Scripts")
 library(jsonlite)
 
-data_name <- "tesla_filtered.json"
+data_name <- "tesla filtered_filtered_no_garbage_filtered.json"
 
 json_data <- fromJSON(txt=data_name)
 

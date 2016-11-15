@@ -24,6 +24,7 @@ def parse_stock_data(data, interval_seconds):
 				line[0] = int(line[0][1:])
 				last_time_stamp = line[0]
 			else:
+				if line[0] == 'TIMEZONE_OFFSET=-300': continue 
 				line[0] = int(last_time_stamp)+interval_seconds*int(line[0])
 			#
 			line.append(datetime.datetime.fromtimestamp(line[0]).strftime('%Y-%m-%d %H:%M:%S'))

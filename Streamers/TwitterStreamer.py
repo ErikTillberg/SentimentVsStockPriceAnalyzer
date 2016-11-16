@@ -6,8 +6,6 @@ from tweepy import Stream
 #Import mongoDB
 from pymongo import MongoClient
 
-from alchemy_sentiment import get_sentiment_score_from_text
-
 import json
 
 import threading
@@ -16,6 +14,8 @@ import pickle
 from time import sleep
 import signal
 import sys
+import os
+import errno
 
 import re
 
@@ -120,6 +120,13 @@ class TweetFetcher:
             x.stopSearch()
         #
 
+def make_sure_path_exists(path):
+    try:
+        os.makedirs(path)
+    except OSError as exception:
+        if exception.errno != errno.EEXIST:
+            raise
+
 class ExceptionLogger(object):
     def __init__(self):
         self._logger = logging.getLogger(__name__)
@@ -157,26 +164,28 @@ def _install_thread_excepthook():
     threading.Thread.__init__ = init
 
 if __name__ == '__main__':
-    _install_thread_excepthook()
-    sys.excepthook = ExceptionLogger().handle_exception
-    #
-    ##############
-    #
     root_logger = logging.getLogger()
     root_logger.setLevel(logging.DEBUG)
     #
     import color_stream_handler
     import time
     #
+    make_sure_path_exists('logs')
+    #
     stream_handler = color_stream_handler.ColorStreamHandler()
     stream_handler.setFormatter(logging.Formatter('%(levelname)-6s : %(name)-25s : %(message)s'))
-    file_log_handler = logging.FileHandler('twitter - %s.log'%time.strftime("%a, %d %b %Y %Hh%Mm%Ss",time.localtime()))
+    file_log_handler = logging.FileHandler('logs/twitter_streamer - %s.log'%time.strftime("%a, %d %b %Y %Hh%Mm%Ss",time.localtime()))
     file_log_handler.setFormatter(logging.Formatter('%(levelname)-6s : %(name)-25s : %(message)s'))
     #
     root_logger.addHandler(stream_handler)
     root_logger.addHandler(file_log_handler)
     #
     logger = logging.getLogger(__name__)
+    #
+    ##############
+    #
+    _install_thread_excepthook()
+    sys.excepthook = ExceptionLogger().handle_exception
     #
     ##############
     #

@@ -12,7 +12,6 @@ def filter_to_x_items(collection_name, new_collection_name, approx_num_of_tweets
 	client = MongoClient()
 	db = client.TwitterData
 	#
-	collection = db[collection_name]
 	collection_to_save = db[new_collection_name]
 	momentary_collection_size = db.command('collstats', collection_name)['count']
 	#

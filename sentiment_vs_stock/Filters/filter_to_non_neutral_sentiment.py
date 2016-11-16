@@ -17,7 +17,6 @@ def filter_to_non_neutral_sentiment(collection_name, new_collection_name, approx
 	client = MongoClient()
 	db = client.TwitterData
 	#
-	collection = db[collection_name]
 	collection_to_save = db[new_collection_name]
 	momentary_collection_size = db.command('collstats', collection_name)['count']
 	#

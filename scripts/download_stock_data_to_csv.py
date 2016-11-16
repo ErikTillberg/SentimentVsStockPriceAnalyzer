@@ -1,6 +1,9 @@
 from sentiment_vs_stock.Stock_Price_Manipulation import stock_data
+from misc.logging_helper import setup_logging
 
 if __name__=='__main__':
+    setup_logging('download_stock_data')
+    #
 	stock_name = 'TSLA'
 	interval_seconds = 3600
 	#

@@ -1,35 +1,33 @@
-from pymongo import MongoClient
-import math
-import re
 import json
-import time
-import datetime
-from bson import json_util
+import logging
+import os
 
-client = MongoClient()
-db = client.TwitterData
+from .mongo_helpers import loop_over_collection
 
-collection_name = 'tesla filtered_filtered_no_garbage_filtered'
-filename = collection_name+'.json'
-collection = db[collection_name]
-coll_size = db.command("collstats", collection_name)['count']
+_logger = logging.getLogger(__name__)
 
-cursor = collection.find()
-counter = 0
-
-with open(filename, 'w') as f:
-	f.write('[\n')
-	for record in cursor:
-		#my_str = json.dumps(record, sort_keys=True, default=json_util.default)
+def mongo_to_json_file(collection_name, filename, log_debugging=False):
+	def process_record(record, collection, counter):
 		my_str = json.dumps({'text':record['text'], 'sentiment':record['sentiment'], 'timestamp_sec':int(int(record['timestamp_ms'])/1000), 'stock_changes':record['stock_changes']})
 		f.write(my_str)
-		if counter != coll_size-1:
-			f.write(',\n')
-		else:
-			print 'skipped'
-			f.write('\n')
-		#
-		counter += 1
+		f.write(',\n')
 	#
-	f.write(']\n')
+	with open(filename, 'wb') as f:
+		f.write('[\n')
+		#
+		loop_over_collection(collection_name, process_record, 10000)
+		#
+		f.seek(-2, os.SEEK_CUR)
+		# erase last new line and comma characters
+		f.write('\n')
+		#
+		f.write(']\n')
+	#
+#
+if __name__ == '__main__':
+	logging.basicConfig(level=logging.DEBUG)
+	#
+	collection_name = 'walmart_filtered'
+	#
+	mongo_to_json_file(collection_name, collection_name+'.json', True)
 #

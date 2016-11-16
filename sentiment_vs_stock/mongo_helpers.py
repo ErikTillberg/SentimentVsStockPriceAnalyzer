@@ -21,7 +21,8 @@ def loop_over_collection(collection_name, process_record_func, log_msg_every_x_t
 		if log_msg_every_x_tweets is not None and counter%log_msg_every_x_tweets == 0:
 			_logger.info('progress: %d/%d tweets (%.2f), %f seconds'%(counter, momentary_collection_size, counter/float(momentary_collection_size), time.time()-start_time))
 		#
-		process_record_func(record, collection, counter)
+		if process_record_func(record, collection, counter) is False:
+			break
 		#
 		counter += 1
 	#

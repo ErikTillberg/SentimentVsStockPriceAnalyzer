@@ -9,12 +9,16 @@ def get_stock_data(interval_seconds, num_days, stock):
 	r = requests.get("https://www.google.com/finance/getprices?i=%d&p=%dd&f=d,o,h,l,c,v&df=cpct&q=%s"%(interval_seconds, num_days, stock))
 	#
 	text = r.content.split("\n", num_of_header_lines)
-	lines = text[num_of_header_lines].split("\n")
+	lines = text[len(text)-1].split("\n")
 	#
-	return {'header':text[0:num_of_header_lines], 'data':lines}
+	header = text[0:(len(text)-1)]
+	#
+	columns = header[4].split("=",1)[1].split(',')
+	#
+	return {'header':header, 'columns':columns, 'data':lines}
 #
-def parse_stock_data(data, interval_seconds):
-	table = []
+def parse_stock_data(data, columns, interval_seconds):
+	new_data = []
 	last_time_stamp = None
 	#
 	for x in data:
@@ -36,22 +40,25 @@ def parse_stock_data(data, interval_seconds):
 					pass
 				#
 			#
-			table.append(line)
+			new_data.append(line)
 		#
 	#
-	return table
+	columns = list(columns)
+	# makes a copy
+	columns.append('DATE_STR')
+	return {'data':new_data, 'columns':columns}
 #
-def get_stock_table_string(table):
-	t = PrettyTable(['DATE', 'CLOSE', 'HIGH', 'LOW', 'OPEN', 'VOLUME', 'DATE_STR'])
-	for x in table:
+def get_stock_table_string(data, columns):
+	t = PrettyTable(columns)
+	for x in data:
 		t.add_row(x)
 	return t
 #
-def write_stock_table_to_csv(table, filename):
+def write_stock_table_to_csv(data, columns, filename):
 	with open(filename, 'wb') as f:
 		wr = csv.writer(f, quoting=csv.QUOTE_ALL)
-		wr.writerow(['DATE', 'CLOSE', 'HIGH', 'LOW', 'OPEN', 'VOLUME', 'DATE_STR'])
-		for x in table:
+		wr.writerow(columns)
+		for x in data:
 			wr.writerow(x)
 		#
 	#
@@ -62,7 +69,7 @@ if __name__=='__main__':
 	#
 	response = get_stock_data(interval_seconds, 10, stock_name)
 	print response['header']
-	table = parse_stock_data(response['data'], interval_seconds)
-	print get_stock_table_string(table)
-	write_stock_table_to_csv(table, stock_name+'.csv')
+	table = parse_stock_data(response['data'], response['columns'], interval_seconds)
+	print get_stock_table_string(table['data'], table['columns'])
+	write_stock_table_to_csv(table['data'], table['columns'], stock_name+'.csv')
 #

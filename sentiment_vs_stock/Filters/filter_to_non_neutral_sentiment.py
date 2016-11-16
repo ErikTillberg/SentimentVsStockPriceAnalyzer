@@ -9,6 +9,9 @@ from ..mongo_helpers import loop_over_collection
 _logger = logging.getLogger(__name__)
 
 def filter_to_non_neutral_sentiment(collection_name, new_collection_name, approx_num_of_tweets=None, log_debugging=False):
+	if collection_name == new_collection_name:
+		raise Exception('You cannot filter a collection into itself!')
+	#
 	client = MongoClient()
 	db = client.TwitterData
 	#

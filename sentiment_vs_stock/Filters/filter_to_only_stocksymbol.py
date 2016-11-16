@@ -5,6 +5,9 @@ import logging
 from ..mongo_helpers import loop_over_collection
 
 def filter_to_only_stocksymbol(collection_name, new_collection_name, search_term, log_debugging=False):
+	if collection_name == new_collection_name:
+		raise Exception('You cannot filter a collection into itself!')
+	#
 	client = MongoClient()
 	db = client.TwitterData
 	collection_to_save = db[new_collection_name]

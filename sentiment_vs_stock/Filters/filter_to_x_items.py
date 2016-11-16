@@ -6,6 +6,9 @@ from pymongo import MongoClient
 from ..mongo_helpers import loop_over_collection
 
 def filter_to_x_items(collection_name, new_collection_name, approx_num_of_tweets, log_debugging=False):
+	if collection_name == new_collection_name:
+		raise Exception('You cannot filter a collection into itself!')
+	#
 	client = MongoClient()
 	db = client.TwitterData
 	#

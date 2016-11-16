@@ -1,0 +1,20 @@
+apikeys:
+  twitter:
+    access_token: '<key>'
+    access_token_secret: '<key>'
+    consumer_key: '<key>'
+    consumer_secret: '<key>'
+  alchemy:
+    apikey: '<key>'
+  marketplace:
+    apikey: '<key>'
+twitter_streamer:
+  search_terms:
+    -
+      - 'company_1'
+	  - 'term_relevant_to_company_1'
+	  - 'another_term_1'
+    -
+      - 'company_2'
+	  - 'term_relevant_to_company_2'
+	  - 'another_term_2'

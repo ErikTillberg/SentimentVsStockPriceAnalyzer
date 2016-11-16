@@ -2,7 +2,7 @@
 *.pyc
 *.p
 *.log
-api_keys.yaml
+settings.yaml
 *.csv
 *.rda
 *.pdf

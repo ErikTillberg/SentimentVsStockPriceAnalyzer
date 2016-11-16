@@ -181,13 +181,13 @@ if __name__ == '__main__':
     ##############
     #
     import yaml
-    with open('../api_keys.yaml', 'r') as f:
-        api_keys = yaml.load(f)
+    with open('settings.yaml', 'r') as f:
+        settings = yaml.load(f)
     #
-    access_token = api_keys['twitter']['access_token']
-    access_token_secret = api_keys['twitter']['access_token_secret']
-    consumer_key = api_keys['twitter']['consumer_key']
-    consumer_secret = api_keys['twitter']['consumer_secret']
+    access_token = settings['apikeys']['twitter']['access_token']
+    access_token_secret = settings['apikeys']['twitter']['access_token_secret']
+    consumer_key = settings['apikeys']['twitter']['consumer_key']
+    consumer_secret = settings['apikeys']['twitter']['consumer_secret']
     #
     ##############
 
@@ -198,7 +198,8 @@ if __name__ == '__main__':
 
     signal.signal(signal.SIGINT, ctrlCHandler)
 
-    t = TweetFetcher([['microsoft', 'windows 10', 'xbox', 'msft'], ['tesla', 'elon musk', 'tsla'], ['dow jones', 'dowj', 'dji'], ['wells fargo', 'wfc'], ['Ford'], ['samsung', 'SSNLF'], ['nintendo', 'ntdoy', 'wii', '3ds', 'zelda', 'mario', 'pokemon']])
+    t = TweetFetcher(settings['twitter_streamer']['search_terms'])
+
     t.startTwitterSearch()
 
     while True:

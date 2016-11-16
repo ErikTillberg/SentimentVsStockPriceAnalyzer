@@ -1,32 +1,20 @@
-#Import the necessary methods from tweepy library
 from tweepy.streaming import StreamListener
 from tweepy import OAuthHandler
 from tweepy import Stream
 
-#Import mongoDB
 from pymongo import MongoClient
 
 import json
-
-import threading
 import logging
-import pickle
-from time import sleep
-import signal
-import sys
-import os
-import errno
-
 import re
-
-client = MongoClient()
-db = client.TwitterData
 
 #This is a basic listener that just prints received tweets to stdout.
 class StdOutListener(StreamListener):
 
     def __init__(self, searchTerms):
         self.searchTerms = searchTerms
+        self.client = MongoClient()
+        self.db = self.client.TwitterData
         self._logger = logging.getLogger(__name__)
 
     def on_data(self, data):
@@ -36,12 +24,12 @@ class StdOutListener(StreamListener):
             matchedWords = self.matchToString(tweet['text'])
             if (len(matchedWords) != 0):
                 for x in matchedWords:
-                    collection = db[x]
+                    collection = self.db[x]
                     collection.insert_one(tweet)
                 #
             #if a match wasn't found, the text must have appeared in an imbedded link.
             else:
-                collection = db['unmatched']
+                collection = self.db['unmatched']
                 collection.insert_one(tweet)
 
             print matchedWords
@@ -92,15 +80,19 @@ class TweetFetcher:
         "Flatten one level of nesting"
         return [x for sublist in listOfLists for x in sublist]
 
-    def __init__(self, searchTerms):
+    def __init__(self, searchTerms, access_token, access_token_secret, consumer_key, consumer_secret):
         TweetFetcher.fetchers.append(self)
         self.searchTerms = searchTerms
         self._logger = logging.getLogger(__name__)
+        self.access_token = access_token
+        self.access_token_secret = access_token_secret
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
 
     def startTwitterSearch(self):
         l = StdOutListener(self.searchTerms)
-        auth = OAuthHandler(consumer_key, consumer_secret)
-        auth.set_access_token(access_token, access_token_secret)
+        auth = OAuthHandler(self.consumer_key, self.consumer_secret)
+        auth.set_access_token(self.access_token, self.access_token_secret)
 
         self.stream = Stream(auth, l)
 
@@ -119,97 +111,3 @@ class TweetFetcher:
         for x in TweetFetcher.fetchers:
             x.stopSearch()
         #
-
-def make_sure_path_exists(path):
-    try:
-        os.makedirs(path)
-    except OSError as exception:
-        if exception.errno != errno.EEXIST:
-            raise
-
-class ExceptionLogger(object):
-    def __init__(self):
-        self._logger = logging.getLogger(__name__)
-    #
-    def handle_exception(self, exc_type, exc_value, exc_traceback):
-        # see here: http://stackoverflow.com/a/16993115/3731982
-        if issubclass(exc_type, KeyboardInterrupt):
-            sys.__excepthook__(exc_type, exc_value, exc_traceback)
-            return
-        #
-        self._logger.error("Uncaught exception", exc_info=(exc_type, exc_value, exc_traceback))
-    #
-
-def _install_thread_excepthook():
-    '''
-    Workaround for sys.excepthook thread bug
-    From http://spyced.blogspot.com/2007/06/workaround-for-sysexcepthook-bug.html (https://sourceforge.net/tracker/?func=detail&atid=105470&aid=1230540&group_id=5470).
-    Call once from __main__ before creating any threads.
-    If using psyco, call psyco.cannotcompile(threading.Thread.run)
-    since this replaces a new-style class method.
-    '''
-    import threading
-    init_old = threading.Thread.__init__
-    def init(self, *args, **kwargs):
-        init_old(self, *args, **kwargs)
-        run_old = self.run
-        def run_with_except_hook(*args, **kw):
-            try:
-                run_old(*args, **kw)
-            except (KeyboardInterrupt, SystemExit):
-                raise
-            except:
-                sys.excepthook(*sys.exc_info())
-        self.run = run_with_except_hook
-    threading.Thread.__init__ = init
-
-if __name__ == '__main__':
-    root_logger = logging.getLogger()
-    root_logger.setLevel(logging.DEBUG)
-    #
-    import color_stream_handler
-    import time
-    #
-    make_sure_path_exists('logs')
-    #
-    stream_handler = color_stream_handler.ColorStreamHandler()
-    stream_handler.setFormatter(logging.Formatter('%(levelname)-6s : %(name)-25s : %(message)s'))
-    file_log_handler = logging.FileHandler('logs/twitter_streamer - %s.log'%time.strftime("%a, %d %b %Y %Hh%Mm%Ss",time.localtime()))
-    file_log_handler.setFormatter(logging.Formatter('%(levelname)-6s : %(name)-25s : %(message)s'))
-    #
-    root_logger.addHandler(stream_handler)
-    root_logger.addHandler(file_log_handler)
-    #
-    logger = logging.getLogger(__name__)
-    #
-    ##############
-    #
-    _install_thread_excepthook()
-    sys.excepthook = ExceptionLogger().handle_exception
-    #
-    ##############
-    #
-    import yaml
-    with open('settings.yaml', 'r') as f:
-        settings = yaml.load(f)
-    #
-    access_token = settings['apikeys']['twitter']['access_token']
-    access_token_secret = settings['apikeys']['twitter']['access_token_secret']
-    consumer_key = settings['apikeys']['twitter']['consumer_key']
-    consumer_secret = settings['apikeys']['twitter']['consumer_secret']
-    #
-    ##############
-
-    def ctrlCHandler(signal, frame):
-        logger.debug('Exiting program (CTRL-C).')
-        TweetFetcher.stopAll()
-        sys.exit(0)
-
-    signal.signal(signal.SIGINT, ctrlCHandler)
-
-    t = TweetFetcher(settings['twitter_streamer']['search_terms'])
-
-    t.startTwitterSearch()
-
-    while True:
-        sleep(20)

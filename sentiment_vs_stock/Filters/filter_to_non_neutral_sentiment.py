@@ -9,6 +9,8 @@ from ..mongo_helpers import loop_over_collection
 _logger = logging.getLogger(__name__)
 
 def filter_to_non_neutral_sentiment(collection_name, new_collection_name, approx_num_of_tweets=None, log_debugging=False):
+	# this function also adds the sentiment to the new collection
+	#
 	if collection_name == new_collection_name:
 		raise Exception('You cannot filter a collection into itself!')
 	#
@@ -20,7 +22,7 @@ def filter_to_non_neutral_sentiment(collection_name, new_collection_name, approx
 	momentary_collection_size = db.command('collstats', collection_name)['count']
 	#
 	if approx_num_of_tweets is None:
-		# try to get every tweet in the collection
+		# try to get every non-neutral tweet in the collection
 		every_x_tweet = 1
 	else:
 		every_x_tweet = math.floor(momentary_collection_size/approx_num_of_tweets)

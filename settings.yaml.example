@@ -12,9 +12,9 @@ twitter_streamer:
   search_terms:
     -
       - 'company_1'
-	  - 'term_relevant_to_company_1'
-	  - 'another_term_1'
+      - 'term_relevant_to_company_1'
+      - 'another_term_1'
     -
       - 'company_2'
-	  - 'term_relevant_to_company_2'
-	  - 'another_term_2'
+      - 'term_relevant_to_company_2'
+      - 'another_term_2'

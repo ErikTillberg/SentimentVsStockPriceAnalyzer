@@ -15,10 +15,10 @@ def filter_to_x_items(collection_name, new_collection_name, approx_num_of_tweets
 	collection_to_save = db[new_collection_name]
 	momentary_collection_size = db.command('collstats', collection_name)['count']
 	#
-	every_x_tweet = math.floor(momentary_collection_size/approx_num_of_tweets)
+	every_x_tweet = momentary_collection_size/float(approx_num_of_tweets)
 	#
 	def process_record(record, collection, counter):
-		if counter % every_x_tweet == 0:
+		if counter % every_x_tweet < 1.0:
 			collection_to_save.insert_one(record)
 		#
 	#
